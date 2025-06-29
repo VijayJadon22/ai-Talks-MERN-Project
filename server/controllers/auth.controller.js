@@ -57,5 +57,14 @@ export const signupUser = async (req, res) => {
     }
 }
 export const getUser = async (req, res) => {
-
-}
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User not found in request" });
+        }
+        return res.status(200).json({ success: true, message: "User found!", user });
+    } catch (error) {
+        console.error("Error in getUser controller:", error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};

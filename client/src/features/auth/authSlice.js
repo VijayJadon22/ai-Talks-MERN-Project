@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../utils/axiosConfig.js";
 
 
-const initalState = {
+const initialState = {
     user: null,
     isAuthenticated: false,
     isLoading: false,
@@ -30,7 +30,7 @@ export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAP
 
 const authSlice = createSlice({
     name: "auth",
-    initalState,
+    initialState,
 
     extraReducers: (builder) => {
         builder

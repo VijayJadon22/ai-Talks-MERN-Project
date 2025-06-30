@@ -19,17 +19,26 @@ export const registerUser = createAsyncThunk("auth/register", async (userData, t
 
 })
 
+export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAPI) => {
+    try {
+        const response = await axios.post("/auth/login", userData);
+        return response.data.user;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.response?.data?.message);
+    }
+})
+
 const authSlice = createSlice({
     name: "auth",
     initalState,
 
     extraReducers: (builder) => {
         builder
-            .addCase(registerUser.pending, (state) => {
+            .addCase(registerUser.pending, loginUser.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(registerUser.fulfilled, (state, action) => {
+            .addCase(registerUser.fulfilled, loginUser.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.isAuthenticated = true;
                 state.isLoading = false;

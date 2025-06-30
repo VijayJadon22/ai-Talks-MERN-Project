@@ -16,31 +16,44 @@ export const registerUser = createAsyncThunk("auth/register", async (userData, t
         toast.success("Sign up successfull!");
         return response.data.user;
     } catch (error) {
-        toast.error(error.response?.message || "Internal server error");
+        toast.error(error.response?.data?.message || "Internal server error");
         return thunkAPI.rejectWithValue(error.message);
     }
 
 });
 
-console.log(initialState);
+
 
 export const loginUser = createAsyncThunk("auth/login", async (userData, thunkAPI) => {
     try {
         const response = await axios.post("/auth/login", userData);
+        toast.success("Login successfull!");
+        return response.data.user;
+    } catch (error) {
+        toast.error(error.response?.data?.message || "Internal server error");
+        return thunkAPI.rejectWithValue(error.response?.data?.message);
+    }
+})
+
+export const getUser = createAsyncThunk("auth/getUser", async (_, thunkAPI) => {
+    try {
+        const response = await axios.get("/auth/");
         return response.data.user;
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data?.message);
     }
 })
 
-export const getUser = createAsyncThunk("auth/getUser", async (thunkAPI) => {
+export const logoutUser = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
     try {
-        const response = await axios.get("auth/");
-        return response.data.user;
+        const response = await axios.post("/auth/logout");
+        return response.data.message;
     } catch (error) {
-        return thunkAPI.rejectWithValue(error.response?.data?.message);
+        return thunkAPI.rejectWithValue(error.response?.data?.message || "Logout failed");
     }
-})
+});
+
+
 
 const authSlice = createSlice({
     name: "auth",
@@ -48,19 +61,58 @@ const authSlice = createSlice({
 
     extraReducers: (builder) => {
         builder
-            .addCase(registerUser.pending, loginUser.pending, getUser.pending, (state) => {
+            //pending
+            .addCase(registerUser.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(registerUser.fulfilled, loginUser.fulfilled, getUser.fulfilled, (state, action) => {
+            .addCase(loginUser.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(getUser.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+
+            // Fulfilled
+            .addCase(registerUser.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.isAuthenticated = true;
                 state.isLoading = false;
             })
-            .addCase(registerUser.rejected, loginUser.rejected, getUser.rejected, (state, action) => {
+            .addCase(loginUser.fulfilled, (state, action) => {
+                state.user = action.payload;
+                state.isAuthenticated = true;
                 state.isLoading = false;
-                state.error = action.payload
             })
+            .addCase(getUser.fulfilled, (state, action) => {
+                state.user = action.payload;
+                state.isAuthenticated = true;
+                state.isLoading = false;
+            })
+
+            // Rejected
+            .addCase(registerUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+            .addCase(loginUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+            .addCase(getUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+
+            //logout 
+            .addCase(logoutUser.fulfilled, (state) => {
+                state.user = null;
+                state.isAuthenticated = false;
+                state.isLoading = false;
+            })
+
     }
 
 })

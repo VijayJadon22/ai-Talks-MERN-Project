@@ -17,7 +17,7 @@ export const generateAIFeedback = async (req, res) => {
             body: JSON.stringify({
                 model: "Qwen/Qwen2.5-Coder-7B", // correct model name
                 messages: [
-                    { role: "system", content: "You are a concise AI assistant. Only respond in a single, short sentence." },
+                    { role: "system", content: "You are a highly concise AI assistant. Reply in only one brief, helpful sentence — never elaborate or continue the conversation." },
                     { role: "user", content: prompt }
                 ]
 
@@ -50,5 +50,20 @@ export const generateAIFeedback = async (req, res) => {
         console.error("AI generation error:", error);
         return res.status(500).json({ success: false, message: "Failed to generate response" });
 
+    }
+}
+
+
+export const getFeedbackHistory = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const feedbacks = await Feedback.find({ userId })
+            .sort({ createdAt: -1 })
+            .limit(5);
+        return res.status(200).json({ success: true, feedbacks });
+    } catch (error) {
+        console.error("History fetch error:", error);
+        return res.status(500).json({ success: false, message: "Failed to fetch history" });
     }
 }

@@ -1,4 +1,4 @@
-export const generateTokenAndSetCookie = async (user, res) => {
+export const generateTokenAndSetCookie = (user, res) => {
 
     const token = user.generateToken(user._id);
     const options = {

@@ -15,7 +15,7 @@ import feedbackRoutes from "./routes/feedback.routes.js";
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// ✅ Recreate __dirname (only needed for ES modules)
+// Recreate __dirname (only needed for ES modules)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/feedback', feedbackRoutes);
 
-// ✅ Serve frontend in production
+// Serve frontend in production
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../client/dist"))); // Vite outputs to `dist`
 

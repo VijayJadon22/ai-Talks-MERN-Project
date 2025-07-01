@@ -16,8 +16,14 @@ export const generateAIFeedback = async (req, res) => {
             },
             body: JSON.stringify({
                 model: "Qwen/Qwen2.5-Coder-7B", // correct model name
+                max_tokens: 60,
+                temperature: 0.2,
                 messages: [
-                    { role: "system", content: "You are a highly concise AI assistant. Reply in only one brief, helpful sentence — never elaborate or continue the conversation." },
+                    {
+                        role: "system",
+                        content:
+                            "You are a clear and precise assistant. Answer the user's question in one short, helpful sentence without adding extra tags or personalities. Avoid any markdown, formatting, or roleplay.",
+                    },
                     { role: "user", content: prompt }
                 ]
 

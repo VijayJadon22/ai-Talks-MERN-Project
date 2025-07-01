@@ -7,6 +7,10 @@ export const loginUser = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
+
+        if (password.length < 6) {
+            return res.status(400).json({ success: false, message: "Password must be 6 characters long" });
+        }
         const userExists = await User.findOne({ email });
         if (!userExists) {
             return res.status(400).json({ success: false, message: "User does not exist, Please signup!" });
@@ -40,6 +44,10 @@ export const signupUser = async (req, res) => {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
+        if (password.length < 6) {
+            return res.status(400).json({ success: false, message: "Password must be 6 characters long" });
+        }
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ success: false, message: "User already exists" });
@@ -59,6 +67,7 @@ export const signupUser = async (req, res) => {
 export const getUser = async (req, res) => {
     try {
         const user = req.user;
+        console.log("user: ",user)
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found in request" });
         }
@@ -72,7 +81,6 @@ export const getUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
     try {
-        console.log("yes");
         res.clearCookie("token", {
             httpOnly: true,
             sameSite: "strict",

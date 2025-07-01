@@ -8,9 +8,6 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        if (password.length < 6) {
-            return res.status(400).json({ success: false, message: "Password must be 6 characters long" });
-        }
         const userExists = await User.findOne({ email });
         if (!userExists) {
             return res.status(400).json({ success: false, message: "User does not exist, Please signup!" });

@@ -33,12 +33,18 @@ app.use('/api/feedback', feedbackRoutes);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../client/dist"))); // Vite outputs to `dist`
+    app.use(express.static(path.join(__dirname, "../client/dist")));
 
-    app.get("*", (req, res) => {
+    // Only fallback to index.html for non-API routes
+    app.get("*", (req, res, next) => {
+        if (req.originalUrl.startsWith("/api")) {
+            return next(); // skip and allow 404 or other handling
+        }
+
         res.sendFile(path.join(__dirname, "../client/dist/index.html"));
     });
 }
+
 
 // Server start
 app.listen(PORT, () => {
